@@ -1,10 +1,9 @@
-import React from 'react'
+import LoginCard from '../components/LoginCard';
 import SignupCard from '../components/SignupCard';
 
-export const AuthPage = () => {
-  return 
-    <>
-        <SignupCard/>
+const AuthPage = () => {
+  return <>
+        <LoginCard/>
     </>;
 };
 
