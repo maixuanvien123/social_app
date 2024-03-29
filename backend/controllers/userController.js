@@ -1,19 +1,19 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/helpers/generateTokenAndSetCookie.js";
-import { v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
-const getUserProfile = async(req,res)=>{
-    const {username} = req.params;
-    try {
-        const user  = await User.findOne({username}).select("-password").select("-updateAt");
-        if(!user) return res.status(400).json({error:"User not found"});
+const getUserProfile = async (req, res) => {
+	const { username } = req.params;
+	try {
+		const user = await User.findOne({ username }).select("-password").select("-updateAt");
+		if (!user) return res.status(400).json({ error: "User not found" });
 
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+		res.status(200).json(user);
+	} catch (err) {
+		res.status(500).json({ message: err.message });
 		console.log("Error in getUserProfile: ", err.message);
-    }
+	}
 }
 
 //sign up
@@ -44,8 +44,8 @@ const signupUser = async (req, res) => {
 				name: newUser.name,
 				email: newUser.email,
 				username: newUser.username,
-                bio: newUser.bio,
-                profilePic: newUser.profilePic,
+				bio: newUser.bio,
+				profilePic: newUser.profilePic,
 			});
 		} else {
 			res.status(400).json({ error: "Invalid user data" });
@@ -87,14 +87,14 @@ const loginUser = async (req, res) => {
 };
 
 //logout
-const logoutUser= async(req,res)=>{
-    try {
-        res.cookie("jwt","",{maxAge:1});
-        res.status(200).json({message:"User logged out successfull"});
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+const logoutUser = async (req, res) => {
+	try {
+		res.cookie("jwt", "", { maxAge: 1 });
+		res.status(200).json({ message: "User logged out successfull" });
+	} catch (err) {
+		res.status(500).json({ error: err.message });
 		console.log("Error in signupUser: ", err.message);
-    }
+	}
 };
 // follow,unfollow
 const followUnFollowUser = async (req, res) => {
@@ -127,33 +127,33 @@ const followUnFollowUser = async (req, res) => {
 	}
 };
 //updateUser
-const updateUser = async(req,res)=>{
-    const {name,email,username,password,bio}=req.body;
-	let {profilePic} = req.body;
+const updateUser = async (req, res) => {
+	const { name, email, username, password, bio } = req.body;
+	let { profilePic } = req.body;
 
-    const userId = req.user._id;
-    try {
-        let user = await User.findById(userId);
-        if (!user) return res.status(400).json({error: "User not found"});
+	const userId = req.user._id;
+	try {
+		let user = await User.findById(userId);
+		if (!user) return res.status(400).json({ error: "User not found" });
 
-        if(req.params.id !== userId.toString()) 
-            return res.status(400).json({error:"You cannot update other user's profile"});
+		if (req.params.id !== userId.toString())
+			return res.status(400).json({ error: "You cannot update other user's profile" });
 
-        if(password){
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password,salt);
-            user.password = hashedPassword;
-        }
+		if (password) {
+			const salt = await bcrypt.genSalt(10);
+			const hashedPassword = await bcrypt.hash(password, salt);
+			user.password = hashedPassword;
+		}
 
-		if(profilePic){
-			if(user.profilePic){
+		if (profilePic) {
+			if (user.profilePic) {
 				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
 			}
 			const uploadedRespone = await cloudinary.uploader.upload(profilePic);
 			profilePic = uploadedRespone.secure_url;
 		}
 
-        user.name = name || user.name;
+		user.name = name || user.name;
 		user.email = email || user.email;
 		user.username = username || user.username;
 		user.profilePic = profilePic || user.profilePic;
@@ -161,12 +161,15 @@ const updateUser = async(req,res)=>{
 
 		user = await user.save();
 
-        res.status(200).json({mess:"Profile update successfully",user});
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+		//password should be null in respone
+		user.password = null;
+
+		res.status(200).json(user);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
 		console.log("Error in loginUser: ", err.message);
-    }
+	}
 }
 
 
-export {signupUser,loginUser,logoutUser,followUnFollowUser,updateUser,getUserProfile};
+export { signupUser, loginUser, logoutUser, followUnFollowUser, updateUser, getUserProfile };

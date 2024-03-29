@@ -1,57 +1,64 @@
 import {
-    Button,
-    Flex,
-    FormControl,
-    FormLabel,
-    Heading,
-    Input,
-    Stack,
-    useColorModeValue,
-    Avatar,
-    Center,
-  } from '@chakra-ui/react'
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Stack,
+  useColorModeValue,
+  Avatar,
+  Center,
+} from '@chakra-ui/react'
 import { useRef, useState } from 'react'
 import { useRecoilState } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import useShowToast from '../../hooks/useShowToast';
-  
-  export default function UpdateProfilePage() {
-    const [user,setUser] = useRecoilState(userAtom);
-    const [inputs,setInputs] = useState({
-        name:user.name,
-        username:user.username,
-        email: user.email,
-        bio: user.bio,
-        password: '',
-    });
-    const fileRef = useRef(null);
 
-    const showToast = useShowToast();
+export default function UpdateProfilePage() {
+  const [user, setUser] = useRecoilState(userAtom);
+  const [inputs, setInputs] = useState({
+    name: user.name,
+    username: user.username,
+    email: user.email,
+    bio: user.bio,
+    password: '',
+  });
+  const fileRef = useRef(null);
 
-    const { handleImageChange, imgUrl} = usePreviewImg();
+  const showToast = useShowToast();
 
-    const handleSubmit = async (e)=>{
-        e.preventDefault();
-    
-        try {
-            const res = await fetch(`/api/users/update/${user._id}`,{
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({...inputs, profilePic:imgUrl}),
-            })
-            const data = await res.json();
-            console.log(data);
-        } catch (error) {
-            showToast("Error",error,"error");
-        }
-    };
-    
-    return (
+  const { handleImageChange, imgUrl } = usePreviewImg();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`/api/users/update/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...inputs, profilePic: imgUrl }),
+      });
+
+      const data = await res.json(); //update user object
+      if (data.error) {
+        showToast("Error", data.error, "error");
+        return;
+      }
+      showToast("Success", "Profile updated successfully", "success");
+      setUser(data);
+      localStorage.setItem("user-threads", JSON.stringify(data));
+    } catch (error) {
+      showToast("Error", error, "error");
+    }
+  };
+
+  return (
     <form onSubmit={handleSubmit}>
-        <Flex
+      <Flex
         align={'center'}
         justify={'center'}>
         <Stack
@@ -68,13 +75,13 @@ import useShowToast from '../../hooks/useShowToast';
           <FormControl id="userName">
             <Stack direction={['column', 'row']} spacing={6}>
               <Center>
-                <Avatar size="xl" boxShadow={"md"} src= {imgUrl || user.profilePic}/>
+                <Avatar size="xl" boxShadow={"md"} src={imgUrl || user.profilePic} />
               </Center>
               <Center w="full">
-                <Button w="full" onClick={()=> fileRef.current.click()}>
-                    Change Avatar
+                <Button w="full" onClick={() => fileRef.current.click()}>
+                  Change Avatar
                 </Button>
-                <Input type='file'hidden ref={fileRef} onChange={handleImageChange}/>
+                <Input type='file' hidden ref={fileRef} onChange={handleImageChange} />
               </Center>
             </Stack>
           </FormControl>
@@ -83,7 +90,7 @@ import useShowToast from '../../hooks/useShowToast';
             <Input
               placeholder="Xuan Vien"
               value={inputs.name}
-              onChange={(e)=>setInputs({...inputs, name:e.target.value})}
+              onChange={(e) => setInputs({ ...inputs, name: e.target.value })}
               _placeholder={{ color: 'gray.500' }}
               type="text"
             />
@@ -93,7 +100,7 @@ import useShowToast from '../../hooks/useShowToast';
             <Input
               placeholder="xuanvien"
               value={inputs.username}
-              onChange={(e) => setInputs({...inputs,username: e.target.value})}
+              onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
               _placeholder={{ color: 'gray.500' }}
               type="text"
             />
@@ -103,7 +110,7 @@ import useShowToast from '../../hooks/useShowToast';
             <Input
               placeholder="your-email@example.com"
               value={inputs.email}
-              onChange={(e)=>setInputs({...inputs,email:e.target.value})}
+              onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
               _placeholder={{ color: 'gray.500' }}
               type="email"
             />
@@ -113,9 +120,9 @@ import useShowToast from '../../hooks/useShowToast';
             <Input
               placeholder="Your Bio."
               value={inputs.bio}
-              onChange={(e)=>setInputs({...inputs,bio:e.target.value})}
+              onChange={(e) => setInputs({ ...inputs, bio: e.target.value })}
               _placeholder={{ color: 'gray.500' }}
-              type="email"
+              type="text"
             />
           </FormControl>
           <FormControl >
@@ -123,7 +130,7 @@ import useShowToast from '../../hooks/useShowToast';
             <Input
               placeholder="password"
               value={inputs.password}
-              onChange={(e)=>setInputs({...inputs,password:e.target.value})}
+              onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
               _placeholder={{ color: 'gray.500' }}
               type="password"
             />
@@ -145,14 +152,14 @@ import useShowToast from '../../hooks/useShowToast';
               _hover={{
                 bg: 'green.500',
               }}
-                type='submit'
-              >
+              type='submit'
+            >
               Submit
             </Button>
           </Stack>
         </Stack>
       </Flex>
     </form>
-    )
-  }
+  )
+}
 
