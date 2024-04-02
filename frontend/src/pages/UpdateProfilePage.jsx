@@ -9,12 +9,12 @@ import {
   useColorModeValue,
   Avatar,
   Center,
-} from '@chakra-ui/react'
-import { useRef, useState } from 'react'
-import { useRecoilState } from 'recoil';
-import userAtom from '../../atoms/userAtom';
-import usePreviewImg from '../../hooks/usePreviewImg';
-import useShowToast from '../../hooks/useShowToast';
+} from "@chakra-ui/react";
+import { useRef, useState } from "react";
+import { useRecoilState } from "recoil";
+import userAtom from "../../atoms/userAtom";
+import usePreviewImg from "../../hooks/usePreviewImg";
+import useShowToast from "../../hooks/useShowToast";
 
 export default function UpdateProfilePage() {
   const [user, setUser] = useRecoilState(userAtom);
@@ -23,7 +23,7 @@ export default function UpdateProfilePage() {
     username: user.username,
     email: user.email,
     bio: user.bio,
-    password: '',
+    password: "",
   });
   const fileRef = useRef(null);
   const [updating, setUpdating] = useState(false);
@@ -44,8 +44,7 @@ export default function UpdateProfilePage() {
         },
         body: JSON.stringify({ ...inputs, profilePic: imgUrl }),
       });
-
-      const data = await res.json(); //update user object
+      const data = await res.json(); // updated user object
       if (data.error) {
         showToast("Error", data.error, "error");
         return;
@@ -59,102 +58,101 @@ export default function UpdateProfilePage() {
       setUpdating(false);
     }
   };
-
   return (
     <form onSubmit={handleSubmit}>
-      <Flex
-        align={'center'}
-        justify={'center'}>
+      <Flex align={"center"} justify={"center"} my={6}>
         <Stack
           spacing={4}
-          w={'full'}
-          maxW={'md'}
-          bg={useColorModeValue('white', 'gray.dark')}
-          rounded={'xl'}
-          boxShadow={'lg'}
-          p={6}>
-          <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
+          w={"full"}
+          maxW={"md"}
+          bg={useColorModeValue("white", "gray.dark")}
+          rounded={"xl"}
+          boxShadow={"lg"}
+          p={6}
+        >
+          <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
             User Profile Edit
           </Heading>
-          <FormControl id="userName">
-            <Stack direction={['column', 'row']} spacing={6}>
+          <FormControl id='userName'>
+            <Stack direction={["column", "row"]} spacing={6}>
               <Center>
-                <Avatar size="xl" boxShadow={"md"} src={imgUrl || user.profilePic} />
+                <Avatar size='xl' boxShadow={"md"} src={imgUrl || user.profilePic} />
               </Center>
-              <Center w="full">
-                <Button w="full" onClick={() => fileRef.current.click()}>
+              <Center w='full'>
+                <Button w='full' onClick={() => fileRef.current.click()}>
                   Change Avatar
                 </Button>
                 <Input type='file' hidden ref={fileRef} onChange={handleImageChange} />
               </Center>
             </Stack>
           </FormControl>
-          <FormControl >
+          <FormControl>
             <FormLabel>Full name</FormLabel>
             <Input
-              placeholder="Xuan Vien"
+              placeholder='John Doe'
               value={inputs.name}
               onChange={(e) => setInputs({ ...inputs, name: e.target.value })}
-              _placeholder={{ color: 'gray.500' }}
-              type="text"
+              _placeholder={{ color: "gray.500" }}
+              type='text'
             />
           </FormControl>
-          <FormControl >
+          <FormControl>
             <FormLabel>User name</FormLabel>
             <Input
-              placeholder="xuanvien"
+              placeholder='johndoe'
               value={inputs.username}
               onChange={(e) => setInputs({ ...inputs, username: e.target.value })}
-              _placeholder={{ color: 'gray.500' }}
-              type="text"
+              _placeholder={{ color: "gray.500" }}
+              type='text'
             />
           </FormControl>
-          <FormControl >
+          <FormControl>
             <FormLabel>Email address</FormLabel>
             <Input
-              placeholder="your-email@example.com"
+              placeholder='your-email@example.com'
               value={inputs.email}
               onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
-              _placeholder={{ color: 'gray.500' }}
-              type="email"
+              _placeholder={{ color: "gray.500" }}
+              type='email'
             />
           </FormControl>
-          <FormControl >
+          <FormControl>
             <FormLabel>Bio</FormLabel>
             <Input
-              placeholder="Your Bio."
+              placeholder='Your bio.'
               value={inputs.bio}
               onChange={(e) => setInputs({ ...inputs, bio: e.target.value })}
-              _placeholder={{ color: 'gray.500' }}
-              type="text"
+              _placeholder={{ color: "gray.500" }}
+              type='text'
             />
           </FormControl>
-          <FormControl >
+          <FormControl>
             <FormLabel>Password</FormLabel>
             <Input
-              placeholder="password"
+              placeholder='password'
               value={inputs.password}
               onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
-              _placeholder={{ color: 'gray.500' }}
-              type="password"
+              _placeholder={{ color: "gray.500" }}
+              type='password'
             />
           </FormControl>
-          <Stack spacing={6} direction={['column', 'row']}>
+          <Stack spacing={6} direction={["column", "row"]}>
             <Button
-              bg={'red.400'}
-              color={'white'}
-              w="full"
+              bg={"red.400"}
+              color={"white"}
+              w='full'
               _hover={{
-                bg: 'red.500',
-              }}>
+                bg: "red.500",
+              }}
+            >
               Cancel
             </Button>
             <Button
-              bg={'green.400'}
-              color={'white'}
-              w="full"
+              bg={"green.400"}
+              color={"white"}
+              w='full'
               _hover={{
-                bg: 'green.500',
+                bg: "green.500",
               }}
               type='submit'
               isLoading={updating}
@@ -164,7 +162,6 @@ export default function UpdateProfilePage() {
           </Stack>
         </Stack>
       </Flex>
-    </form >
-  )
+    </form>
+  );
 }
-
