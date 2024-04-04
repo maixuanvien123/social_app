@@ -111,7 +111,7 @@ const PostPage = () => {
                     <Text fontSize={"2xl"}>👋</Text>
                     <Text color={"gray.light"}>Get the app to like, reply and post.</Text>
                 </Flex>
-                <Button>Get</Button>
+                <Button></Button>
             </Flex>
 
             <Divider my={4} />
